@@ -1,98 +1,62 @@
-import { Image } from 'expo-image';
-import { Platform, StyleSheet } from 'react-native';
-
-import { HelloWave } from '@/components/hello-wave';
-import ParallaxScrollView from '@/components/parallax-scroll-view';
-import { ThemedText } from '@/components/themed-text';
-import { ThemedView } from '@/components/themed-view';
-import { Link } from 'expo-router';
+import React from 'react';
+import { View, Text, ScrollView, RefreshControl, StyleSheet, ActivityIndicator } from 'react-native';
+import { COLORS, SPACING, FONTS, FONT_SIZES } from '../../constants/theme';
+import { useWeather } from '../../hooks/useWeather';
+import SearchBar from '../../components/SearchBar';
+import CurrentWeatherCard from '../../components/CurrentWeatherCard';
+import HourlyForecast from '../../components/HourlyForecast';
+import WeeklyForecast from '../../components/WeeklyForecast';
+import WeatherFace from '../../components/WeatherFace';
 
 export default function HomeScreen() {
-  return (
-    <ParallaxScrollView
-      headerBackgroundColor={{ light: '#A1CEDC', dark: '#1D3D47' }}
-      headerImage={
-        <Image
-          source={require('@/assets/images/partial-react-logo.png')}
-          style={styles.reactLogo}
-        />
-      }>
-      <ThemedView style={styles.titleContainer}>
-        <ThemedText type="title">Welcome!</ThemedText>
-        <HelloWave />
-      </ThemedView>
-      <ThemedView style={styles.stepContainer}>
-        <ThemedText type="subtitle">Step 1: Try it</ThemedText>
-        <ThemedText>
-          Edit <ThemedText type="defaultSemiBold">app/(tabs)/index.tsx</ThemedText> to see changes.
-          Press{' '}
-          <ThemedText type="defaultSemiBold">
-            {Platform.select({
-              ios: 'cmd + d',
-              android: 'cmd + m',
-              web: 'F12',
-            })}
-          </ThemedText>{' '}
-          to open developer tools.
-        </ThemedText>
-      </ThemedView>
-      <ThemedView style={styles.stepContainer}>
-        <Link href="/modal">
-          <Link.Trigger>
-            <ThemedText type="subtitle">Step 2: Explore</ThemedText>
-          </Link.Trigger>
-          <Link.Preview />
-          <Link.Menu>
-            <Link.MenuAction title="Action" icon="cube" onPress={() => alert('Action pressed')} />
-            <Link.MenuAction
-              title="Share"
-              icon="square.and.arrow.up"
-              onPress={() => alert('Share pressed')}
-            />
-            <Link.Menu title="More" icon="ellipsis">
-              <Link.MenuAction
-                title="Delete"
-                icon="trash"
-                destructive
-                onPress={() => alert('Delete pressed')}
-              />
-            </Link.Menu>
-          </Link.Menu>
-        </Link>
+  const { weather, loading, error, unit, refresh, selectCity, toggleUnit, searchCity } = useWeather();
 
-        <ThemedText>
-          {`Tap the Explore tab to learn more about what's included in this starter app.`}
-        </ThemedText>
-      </ThemedView>
-      <ThemedView style={styles.stepContainer}>
-        <ThemedText type="subtitle">Step 3: Get a fresh start</ThemedText>
-        <ThemedText>
-          {`When you're ready, run `}
-          <ThemedText type="defaultSemiBold">npm run reset-project</ThemedText> to get a fresh{' '}
-          <ThemedText type="defaultSemiBold">app</ThemedText> directory. This will move the current{' '}
-          <ThemedText type="defaultSemiBold">app</ThemedText> to{' '}
-          <ThemedText type="defaultSemiBold">app-example</ThemedText>.
-        </ThemedText>
-      </ThemedView>
-    </ParallaxScrollView>
+  if (loading && !weather) {
+    return (
+      <View style={s.centered}>
+        <WeatherFace temp={22} conditionCode={800} size={80} />
+        <Text style={s.loadingText}>Finding your weather...</Text>
+        <ActivityIndicator color={COLORS.accent} style={{ marginTop: SPACING.md }} />
+      </View>
+    );
+  }
+
+  if (error && !weather) {
+    return (
+      <View style={s.centered}>
+        <WeatherFace temp={0} conditionCode={200} size={80} />
+        <Text style={s.errorText}>{error}</Text>
+        <View style={{ width: '100%' }}><SearchBar onSelectCity={selectCity} searchCity={searchCity} /></View>
+      </View>
+    );
+  }
+
+  return (
+    <ScrollView style={s.scroll} contentContainerStyle={s.content} showsVerticalScrollIndicator={false}
+      refreshControl={<RefreshControl refreshing={loading} onRefresh={refresh} tintColor={COLORS.accent} colors={[COLORS.accent]} />}>
+      <View style={s.header}>
+        <Text style={s.appName}>weathermoji</Text>
+        <Text style={s.tagline}>your vibes, in emoji 🎯</Text>
+      </View>
+      <SearchBar onSelectCity={selectCity} searchCity={searchCity} />
+      {weather && (
+        <>
+          <CurrentWeatherCard current={weather.current} city={weather.city} country={weather.country} unit={unit} onToggleUnit={toggleUnit} />
+          <HourlyForecast hourly={weather.hourly} />
+          <WeeklyForecast daily={weather.daily} />
+        </>
+      )}
+    </ScrollView>
   );
 }
 
-const styles = StyleSheet.create({
-  titleContainer: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: 8,
-  },
-  stepContainer: {
-    gap: 8,
-    marginBottom: 8,
-  },
-  reactLogo: {
-    height: 178,
-    width: 290,
-    bottom: 0,
-    left: 0,
-    position: 'absolute',
-  },
+const s = StyleSheet.create({
+  scroll: { flex: 1, backgroundColor: COLORS.background },
+  content: { paddingBottom: SPACING.xxl },
+  header: { paddingHorizontal: SPACING.lg, paddingTop: SPACING.xl, paddingBottom: SPACING.md },
+  appName: { fontSize: FONT_SIZES.title, fontFamily: FONTS.bold, color: COLORS.text, letterSpacing: -1 },
+  tagline: { fontSize: FONT_SIZES.caption, fontFamily: FONTS.regular, color: COLORS.textLight, marginTop: 2 },
+  centered: { flex: 1, backgroundColor: COLORS.background, alignItems: 'center', justifyContent: 'center', padding: SPACING.xl },
+  loadingText: { fontSize: FONT_SIZES.subtitle, fontFamily: FONTS.semibold, color: COLORS.text, marginTop: SPACING.lg },
+  errorText: { fontSize: FONT_SIZES.body, fontFamily: FONTS.medium, color: COLORS.accent, textAlign: 'center', marginTop: SPACING.lg, marginBottom: SPACING.xl },
 });

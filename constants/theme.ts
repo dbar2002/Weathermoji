@@ -1,53 +1,47 @@
-/**
- * Below are the colors that are used in the app. The colors are defined in the light and dark mode.
- * There are many other ways to style your app. For example, [Nativewind](https://www.nativewind.dev/), [Tamagui](https://tamagui.dev/), [unistyles](https://reactnativeunistyles.vercel.app), etc.
- */
+export const COLORS = {
+  sunnyYellow: '#FFD93D',
+  skyBlue: '#6EC6FF',
+  cloudWhite: '#F4F7FF',
+  rainBlue: '#4A90D9',
+  stormGray: '#5C6B7A',
+  nightPurple: '#2E1065',
+  snowWhite: '#E8F0FE',
+  hotOrange: '#FF6B35',
+  background: '#FFF8EE',
+  card: '#FFFFFF',
+  text: '#2D2250',
+  textLight: '#8B8BA3',
+  accent: '#FF6B35',
+  accentSecondary: '#6EC6FF',
+  gradientSunny: ['#FFD93D', '#FF9F43'] as const,
+  gradientRainy: ['#6EC6FF', '#4A90D9'] as const,
+  gradientCloudy: ['#C8D6E5', '#8395A7'] as const,
+  gradientNight: ['#2E1065', '#4A1A8A'] as const,
+  gradientSnow: ['#E8F0FE', '#B8C9E8'] as const,
+  gradientStormy: ['#5C6B7A', '#2C3A47'] as const,
+  gradientMist: ['#D5DBEA', '#AEB6C5'] as const,
+} as const;
 
-import { Platform } from 'react-native';
+export type GradientKey = 'gradientSunny' | 'gradientRainy' | 'gradientCloudy' | 'gradientNight' | 'gradientSnow' | 'gradientStormy' | 'gradientMist';
 
-const tintColorLight = '#0a7ea4';
-const tintColorDark = '#fff';
+export const SPACING = { xs: 4, sm: 8, md: 16, lg: 24, xl: 32, xxl: 48 } as const;
+export const RADIUS = { sm: 12, md: 20, lg: 28, xl: 36, pill: 999 } as const;
 
-export const Colors = {
-  light: {
-    text: '#11181C',
-    background: '#fff',
-    tint: tintColorLight,
-    icon: '#687076',
-    tabIconDefault: '#687076',
-    tabIconSelected: tintColorLight,
-  },
-  dark: {
-    text: '#ECEDEE',
-    background: '#151718',
-    tint: tintColorDark,
-    icon: '#9BA1A6',
-    tabIconDefault: '#9BA1A6',
-    tabIconSelected: tintColorDark,
-  },
-};
+export const SHADOWS = {
+  card: { shadowColor: '#2D2250', shadowOffset: { width: 0, height: 8 }, shadowOpacity: 0.08, shadowRadius: 24, elevation: 6 },
+  cardHover: { shadowColor: '#FF6B35', shadowOffset: { width: 0, height: 12 }, shadowOpacity: 0.15, shadowRadius: 32, elevation: 10 },
+} as const;
 
-export const Fonts = Platform.select({
-  ios: {
-    /** iOS `UIFontDescriptorSystemDesignDefault` */
-    sans: 'system-ui',
-    /** iOS `UIFontDescriptorSystemDesignSerif` */
-    serif: 'ui-serif',
-    /** iOS `UIFontDescriptorSystemDesignRounded` */
-    rounded: 'ui-rounded',
-    /** iOS `UIFontDescriptorSystemDesignMonospaced` */
-    mono: 'ui-monospace',
-  },
-  default: {
-    sans: 'normal',
-    serif: 'serif',
-    rounded: 'normal',
-    mono: 'monospace',
-  },
-  web: {
-    sans: "system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif",
-    serif: "Georgia, 'Times New Roman', serif",
-    rounded: "'SF Pro Rounded', 'Hiragino Maru Gothic ProN', Meiryo, 'MS PGothic', sans-serif",
-    mono: "SFMono-Regular, Menlo, Monaco, Consolas, 'Liberation Mono', 'Courier New', monospace",
-  },
-});
+export const FONTS = {
+  bold: 'Nunito_800ExtraBold',
+  semibold: 'Nunito_700Bold',
+  medium: 'Nunito_600SemiBold',
+  regular: 'Nunito_400Regular',
+  boldFallback: 'System',
+  regularFallback: 'System',
+} as const;
+
+export const FONT_SIZES = {
+  emoji: 72, emojiLg: 96, heroTemp: 64, title: 28, subtitle: 20,
+  body: 16, caption: 13, micro: 11,
+} as const;
