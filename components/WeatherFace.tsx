@@ -80,24 +80,36 @@ function MoonFace({ temp, size }: { temp: number; size: number }) {
 
   if (temp >= 25)      { eyes = 'happy';  mouth = 'smile';       cheeks = true; }
   else if (temp >= 18) { eyes = 'sleepy'; mouth = 'small-smile'; }
-  else if (temp >= 10) { eyes = 'normal'; mouth = 'neutral'; }
+  else if (temp >= 10) { eyes = 'sleepy'; mouth = 'neutral'; }
   else if (temp >= 3)  { eyes = 'wide';   mouth = 'wavy';        cheeks = true; }
   else                 { eyes = 'x';      mouth = 'open-frown';  cheeks = true; }
 
   const r = size / 2, cx = r, cy = r;
-  const dk = '#5C4B1A';
+  const dk = '#4A4070';
 
   return (
     <View style={{ width: size, height: size }}>
       <Svg width={size} height={size} viewBox={`0 0 ${size} ${size}`}>
-        <Circle cx={cx} cy={cy} r={r * 0.55} fill="#F0E68C" />
-        <Circle cx={cx} cy={cy} r={r * 0.55} fill="none" stroke="#D4C652" strokeWidth={1} opacity={0.3} />
-        <Circle cx={cx - r * 0.15} cy={cy + r * 0.15} r={r * 0.06} fill="#E0D45C" opacity={0.5} />
-        <Circle cx={cx + r * 0.1} cy={cy - r * 0.2} r={r * 0.04} fill="#E0D45C" opacity={0.4} />
+        {/* Stars */}
+        <Circle cx={cx - r * 0.75} cy={cy - r * 0.55} r={r * 0.025} fill="#fff" opacity={0.7} />
+        <Circle cx={cx + r * 0.7} cy={cy - r * 0.65} r={r * 0.03} fill="#fff" opacity={0.6} />
+        <Circle cx={cx - r * 0.6} cy={cy + r * 0.6} r={r * 0.02} fill="#fff" opacity={0.5} />
+        <Circle cx={cx + r * 0.8} cy={cy + r * 0.35} r={r * 0.025} fill="#fff" opacity={0.6} />
+        <Circle cx={cx + r * 0.3} cy={cy - r * 0.8} r={r * 0.02} fill="#fff" opacity={0.5} />
+        {/* Moon body */}
+        <Circle cx={cx} cy={cy} r={r * 0.55} fill="#F5E6A3" />
+        {/* Crescent shadow — overlapping circle to create crescent shape */}
+        <Circle cx={cx + r * 0.22} cy={cy - r * 0.15} r={r * 0.42} fill="#1A2A3A" opacity={0.2} />
+        {/* Craters */}
+        <Circle cx={cx - r * 0.18} cy={cy + r * 0.12} r={r * 0.06} fill="#E8D88C" opacity={0.5} />
+        <Circle cx={cx + r * 0.05} cy={cy - r * 0.22} r={r * 0.04} fill="#E8D88C" opacity={0.4} />
+        <Circle cx={cx - r * 0.05} cy={cy + r * 0.28} r={r * 0.035} fill="#E8D88C" opacity={0.4} />
+        {/* Outline */}
+        <Circle cx={cx} cy={cy} r={r * 0.55} fill="none" stroke="#D4C070" strokeWidth={1} opacity={0.4} />
         {cheeks && (
           <>
-            <Circle cx={cx - r * 0.25} cy={cy + r * 0.1} r={r * 0.08} fill="#E8C84A" opacity={0.4} />
-            <Circle cx={cx + r * 0.25} cy={cy + r * 0.1} r={r * 0.08} fill="#E8C84A" opacity={0.4} />
+            <Circle cx={cx - r * 0.25} cy={cy + r * 0.1} r={r * 0.08} fill="#E8C84A" opacity={0.3} />
+            <Circle cx={cx + r * 0.25} cy={cy + r * 0.1} r={r * 0.08} fill="#E8C84A" opacity={0.3} />
           </>
         )}
         <EyesSvg type={eyes} cx={cx} cy={cy} r={r} dark={dk} />

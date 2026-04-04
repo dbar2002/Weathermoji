@@ -13,12 +13,12 @@ export const COLORS = {
   textLight: '#8B8BA3',
   accent: '#FF6B35',
   accentSecondary: '#6EC6FF',
-  gradientSunny: ['#FFD93D', '#FF9F43'] as const,
+  gradientSunny: ['#FFB347', '#FFCC33'] as const,
   gradientRainy: ['#6EC6FF', '#4A90D9'] as const,
   gradientCloudy: ['#C8D6E5', '#8395A7'] as const,
-  gradientNight: ['#2E1065', '#4A1A8A'] as const,
+  gradientNight: ['#0F2027', '#203A43'] as const,
   gradientSnow: ['#E8F0FE', '#B8C9E8'] as const,
-  gradientStormy: ['#5C6B7A', '#2C3A47'] as const,
+  gradientStormy: ['#3D4E5C', '#1C2B36'] as const,
   gradientMist: ['#D5DBEA', '#AEB6C5'] as const,
 } as const;
 

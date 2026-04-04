@@ -1,6 +1,6 @@
 import React from 'react';
 import { View, Text, StyleSheet } from 'react-native';
-import { COLORS, SPACING, RADIUS, FONTS, FONT_SIZES, SHADOWS } from '../constants/theme';
+import { SPACING, RADIUS, FONTS, FONT_SIZES } from '../constants/theme';
 import WeatherFace from './WeatherFace';
 import type { DailyItem } from '../utils/weatherApi';
 
@@ -16,17 +16,17 @@ export default function WeeklyForecast({ daily }: { daily: DailyItem[] }) {
 
   return (
     <View style={s.container}>
-      <Text style={s.title}>📅 This Week</Text>
+      <Text style={s.title}>This Week</Text>
       <View style={s.card}>
         {daily.map((day, i) => {
           const leftPct = ((day.tempMin - gMin) / range) * 100;
           const widthPct = Math.max(((day.tempMax - day.tempMin) / range) * 100, 8);
           const avg = (day.tempMin + day.tempMax) / 2;
           return (
-            <View key={`d-${day.date}-${i}`} style={s.row}>
+            <View key={`d-${day.date}-${i}`} style={[s.row, i < daily.length - 1 && s.rowBorder]}>
               <Text style={s.dayName}>{getDayName(day.date, i)}</Text>
               <View style={s.faceWrap}><WeatherFace temp={avg} conditionCode={day.conditionCode} size={24} /></View>
-              <Text style={s.pop}>{day.pop > 0 ? `💧${day.pop}%` : ''}</Text>
+              <Text style={s.pop}>{day.pop > 0 ? `${day.pop}%` : ''}</Text>
               <View style={s.barWrap}>
                 <Text style={s.tempMin}>{day.tempMin}°</Text>
                 <View style={s.barTrack}>
@@ -44,15 +44,16 @@ export default function WeeklyForecast({ daily }: { daily: DailyItem[] }) {
 
 const s = StyleSheet.create({
   container: { marginTop: SPACING.lg, marginHorizontal: SPACING.lg, marginBottom: SPACING.xxl },
-  title: { fontSize: FONT_SIZES.subtitle, fontFamily: FONTS.bold, color: COLORS.text, marginBottom: SPACING.sm },
-  card: { backgroundColor: COLORS.card, borderRadius: RADIUS.lg, padding: SPACING.md, ...SHADOWS.card },
-  row: { flexDirection: 'row', alignItems: 'center', paddingVertical: SPACING.sm + 2, borderBottomWidth: 1, borderBottomColor: COLORS.cloudWhite },
-  dayName: { width: 50, fontSize: FONT_SIZES.body, fontFamily: FONTS.semibold, color: COLORS.text },
+  title: { fontSize: FONT_SIZES.subtitle, fontFamily: FONTS.bold, color: '#fff', marginBottom: SPACING.sm },
+  card: { backgroundColor: 'rgba(255,255,255,0.15)', borderRadius: RADIUS.lg, padding: SPACING.md, borderWidth: 1, borderColor: 'rgba(255,255,255,0.1)' },
+  row: { flexDirection: 'row', alignItems: 'center', paddingVertical: SPACING.sm + 2 },
+  rowBorder: { borderBottomWidth: 1, borderBottomColor: 'rgba(255,255,255,0.1)' },
+  dayName: { width: 50, fontSize: FONT_SIZES.body, fontFamily: FONTS.semibold, color: '#fff' },
   faceWrap: { width: 36, alignItems: 'center' },
-  pop: { width: 50, fontSize: FONT_SIZES.micro, fontFamily: FONTS.medium, color: COLORS.rainBlue, textAlign: 'center' },
+  pop: { width: 50, fontSize: FONT_SIZES.micro, fontFamily: FONTS.medium, color: 'rgba(255,255,255,0.7)', textAlign: 'center' },
   barWrap: { flex: 1, flexDirection: 'row', alignItems: 'center', marginLeft: SPACING.sm, gap: SPACING.xs },
-  tempMin: { fontSize: FONT_SIZES.caption, fontFamily: FONTS.medium, color: COLORS.textLight, width: 28, textAlign: 'right' },
-  barTrack: { flex: 1, height: 6, backgroundColor: COLORS.cloudWhite, borderRadius: 3, overflow: 'hidden', position: 'relative' },
-  barFill: { position: 'absolute', top: 0, height: 6, borderRadius: 3, backgroundColor: COLORS.accent },
-  tempMax: { fontSize: FONT_SIZES.caption, fontFamily: FONTS.bold, color: COLORS.text, width: 28 },
+  tempMin: { fontSize: FONT_SIZES.caption, fontFamily: FONTS.medium, color: 'rgba(255,255,255,0.6)', width: 28, textAlign: 'right' },
+  barTrack: { flex: 1, height: 6, backgroundColor: 'rgba(255,255,255,0.15)', borderRadius: 3, overflow: 'hidden', position: 'relative' },
+  barFill: { position: 'absolute', top: 0, height: 6, borderRadius: 3, backgroundColor: 'rgba(255,255,255,0.6)' },
+  tempMax: { fontSize: FONT_SIZES.caption, fontFamily: FONTS.bold, color: '#fff', width: 28 },
 });

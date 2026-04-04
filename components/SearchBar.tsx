@@ -1,5 +1,5 @@
 import React, { useState, useCallback } from 'react';
-import { View, TextInput, TouchableOpacity, Text, FlatList, StyleSheet, Keyboard } from 'react-native';
+import { View, TextInput, TouchableOpacity, Text, ScrollView, StyleSheet, Keyboard } from 'react-native';
 import { COLORS, SPACING, RADIUS, FONTS, FONT_SIZES, SHADOWS } from '../constants/theme';
 import type { CityResult } from '../utils/weatherApi';
 
@@ -31,7 +31,6 @@ export default function SearchBar({ onSelectCity, searchCity }: Props) {
   return (
     <View style={s.wrapper}>
       <View style={s.inputRow}>
-        <Text style={s.icon}>🔍</Text>
         <TextInput style={s.input} placeholder="Search city..." placeholderTextColor={COLORS.textLight}
           value={query} onChangeText={handleSearch} returnKeyType="search" autoCorrect={false} />
         {query.length > 0 && (
@@ -41,23 +40,20 @@ export default function SearchBar({ onSelectCity, searchCity }: Props) {
         )}
       </View>
       {showResults && results.length > 0 && (
-        <View style={s.dropdown}>
-          <FlatList data={results} keyExtractor={(item, i) => `${item.lat}-${item.lon}-${i}`}
-            keyboardShouldPersistTaps="handled"
-            renderItem={({ item }) => (
-              <TouchableOpacity style={s.resultItem} onPress={() => handleSelect(item)} activeOpacity={0.6}>
-                <Text style={s.resultEmoji}>📍</Text>
-                <View style={s.resultTextWrap}>
-                  <Text style={s.resultCity}>{item.name}</Text>
-                  <Text style={s.resultMeta}>{item.state ? `${item.state}, ` : ''}{item.country}</Text>
-                </View>
-              </TouchableOpacity>
-            )} />
-        </View>
+        <ScrollView style={s.dropdown} keyboardShouldPersistTaps="handled" nestedScrollEnabled>
+          {results.map((item, i) => (
+            <TouchableOpacity key={`${item.lat}-${item.lon}-${i}`} style={s.resultItem} onPress={() => handleSelect(item)} activeOpacity={0.6}>
+              <View style={s.resultTextWrap}>
+                <Text style={s.resultCity}>{item.name}</Text>
+                <Text style={s.resultMeta}>{item.state ? `${item.state}, ` : ''}{item.country}</Text>
+              </View>
+            </TouchableOpacity>
+          ))}
+        </ScrollView>
       )}
       {showResults && results.length === 0 && !searching && query.length >= 2 && (
         <View style={s.dropdown}>
-          <View style={s.noResults}><Text style={{ fontSize: 32 }}>🤔</Text><Text style={s.noResultsText}>No cities found</Text></View>
+          <View style={s.noResults}><Text style={s.noResultsText}>No cities found</Text></View>
         </View>
       )}
     </View>

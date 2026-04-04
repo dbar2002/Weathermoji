@@ -7,7 +7,7 @@ export function useWeather() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [location, setLocation] = useState<{ lat: number; lon: number } | null>(null);
-  const [unit, setUnit] = useState<UnitSystem>('metric');
+  const [unit, setUnit] = useState<UnitSystem>('imperial');
 
   useEffect(() => {
     (async () => {
