@@ -13,10 +13,10 @@ interface WeatherFaceProps {
 export default function WeatherFace({ temp, conditionCode, isNight = false, size = 88 }: WeatherFaceProps) {
   const meta = getWeatherMeta(conditionCode, isNight);
   if (meta.type === 'rain' || meta.type === 'storm' || meta.type === 'snow') {
-    return <CloudFace temp={temp} mood={getCloudMood(conditionCode)} size={size} />;
+    return <CloudFace temp={temp} mood={getCloudMood(conditionCode)} size={size} isNight={isNight} />;
   }
   if (meta.type === 'cloudy' || meta.type === 'mist') {
-    return <CloudFace temp={temp} mood="neutral" size={size} />;
+    return <CloudFace temp={temp} mood="neutral" size={size} isNight={isNight} />;
   }
   if (isNight) return <MoonFace temp={temp} size={size} />;
   return <SunFace temp={temp} size={size} />;
@@ -121,26 +121,44 @@ function MoonFace({ temp, size }: { temp: number; size: number }) {
 
 // ── Cloud Face ───────────────────────────────────────────
 
-function CloudFace({ temp, mood, size }: { temp: number; mood: CloudMood; size: number }) {
+function CloudFace({ temp, mood, size, isNight = false }: { temp: number; mood: CloudMood; size: number; isNight?: boolean }) {
   let eyes: string, mouth: string, cheeks = false, brows = false;
 
   if (mood === 'storm')          { eyes = 'angry';  mouth = 'grr';         brows = true; }
   else if (mood === 'heavy-rain'){ eyes = 'crying'; mouth = 'frown'; }
   else if (mood === 'rain')      { eyes = 'sad';    mouth = 'pout'; }
   else if (mood === 'snow')      { eyes = 'sleepy'; mouth = 'small-smile'; cheeks = true; }
+  else if (isNight)              { eyes = 'sleepy'; mouth = 'small-smile'; }
   else if (temp >= 25)           { eyes = 'normal'; mouth = 'small-smile'; }
   else if (temp >= 15)           { eyes = 'normal'; mouth = 'neutral'; }
   else                           { eyes = 'wide';   mouth = 'wavy'; }
 
   const r = size / 2, cx = r, cy = r;
   const cyo = cy + r * 0.05;
-  const dk = mood === 'storm' ? '#1A202C' : '#4A5568';
-  const cFill = mood === 'storm' ? '#4A5568' : mood === 'rain' || mood === 'heavy-rain' ? '#7A96AD' : mood === 'snow' ? '#C8DCF0' : '#B8C9D9';
-  const cTop = mood === 'storm' ? '#5C6B7A' : mood === 'rain' || mood === 'heavy-rain' ? '#8BA3B8' : mood === 'snow' ? '#D6E4F7' : '#C8D6E5';
+
+  // Night clouds are darker
+  const dk = mood === 'storm' ? '#1A202C' : isNight ? '#2A3444' : '#4A5568';
+  const cFill = mood === 'storm' ? '#4A5568'
+    : mood === 'rain' || mood === 'heavy-rain' ? (isNight ? '#4A5E72' : '#7A96AD')
+    : mood === 'snow' ? (isNight ? '#8A9CB5' : '#C8DCF0')
+    : isNight ? '#4A5568' : '#B8C9D9';
+  const cTop = mood === 'storm' ? '#5C6B7A'
+    : mood === 'rain' || mood === 'heavy-rain' ? (isNight ? '#586E82' : '#8BA3B8')
+    : mood === 'snow' ? (isNight ? '#9AAFC5' : '#D6E4F7')
+    : isNight ? '#586878' : '#C8D6E5';
 
   return (
     <View style={{ width: size, height: size }}>
       <Svg width={size} height={size} viewBox={`0 0 ${size} ${size}`}>
+        {/* Stars at night */}
+        {isNight && <>
+          <Circle cx={cx - r * 0.7} cy={cy - r * 0.5} r={r * 0.02} fill="#fff" opacity={0.6} />
+          <Circle cx={cx + r * 0.75} cy={cy - r * 0.6} r={r * 0.025} fill="#fff" opacity={0.5} />
+          <Circle cx={cx - r * 0.55} cy={cy + r * 0.55} r={r * 0.018} fill="#fff" opacity={0.4} />
+          <Circle cx={cx + r * 0.8} cy={cy + r * 0.3} r={r * 0.02} fill="#fff" opacity={0.5} />
+          <Circle cx={cx + r * 0.35} cy={cy - r * 0.75} r={r * 0.015} fill="#fff" opacity={0.45} />
+          <Circle cx={cx - r * 0.85} cy={cy + r * 0.1} r={r * 0.015} fill="#fff" opacity={0.35} />
+        </>}
         {/* Cloud shape */}
         <Ellipse cx={cx - r * 0.25} cy={cyo - r * 0.22} rx={r * 0.39} ry={r * 0.32} fill={cTop} />
         <Ellipse cx={cx + r * 0.15} cy={cyo - r * 0.18} rx={r * 0.36} ry={r * 0.3} fill={cTop} />

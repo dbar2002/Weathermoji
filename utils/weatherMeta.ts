@@ -63,7 +63,22 @@ const NIGHT_OVERRIDES: Partial<Record<number, WeatherMeta>> = {
 
 export function getWeatherMeta(code: number, isNight = false): WeatherMeta {
   if (isNight && NIGHT_OVERRIDES[code]) return NIGHT_OVERRIDES[code]!;
-  return MAP[code] || { label: 'Mystery weather', bg: 'gradientCloudy' as GradientKey, type: 'cloudy' as WeatherType };
+  const base = MAP[code] || { label: 'Mystery weather', bg: 'gradientCloudy' as GradientKey, type: 'cloudy' as WeatherType };
+
+  // Swap to dark gradients at night
+  if (isNight) {
+    const nightBgMap: Partial<Record<GradientKey, GradientKey>> = {
+      gradientCloudy: 'gradientCloudyNight',
+      gradientRainy: 'gradientRainyNight',
+      gradientSnow: 'gradientSnowNight',
+      gradientMist: 'gradientMistNight',
+      gradientSunny: 'gradientNight',
+    };
+    const nightBg = nightBgMap[base.bg];
+    if (nightBg) return { ...base, bg: nightBg };
+  }
+
+  return base;
 }
 
 export function getCloudMood(code: number): CloudMood {

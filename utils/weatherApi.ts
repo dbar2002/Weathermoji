@@ -38,10 +38,22 @@ export interface DailyItem {
   pop: number;
 }
 
+export interface AirQuality {
+  aqi: number;        // 1-5 scale
+  aqiLabel: string;   // Good, Fair, Moderate, Poor, Very Poor
+  co: number;
+  no2: number;
+  o3: number;
+  so2: number;
+  pm2_5: number;
+  pm10: number;
+}
+
 export interface WeatherData {
   current: CurrentWeather;
   hourly: HourlyItem[];
   daily: DailyItem[];
+  airQuality: AirQuality | null;
   city: string;
   country: string;
 }
@@ -76,10 +88,15 @@ export async function fetchWeather(lat: number, lon: number, units: UnitSystem =
   if (!forecastRes.ok) throw new Error(`Forecast API error: ${forecastRes.status}`);
   const forecast = await forecastRes.json();
 
+  // TODO: AQI disabled — revisit EPA calculation later
+  // const airQuality = await fetchAirQuality(lat, lon);
+  const airQuality: AirQuality | null = null;
+
   return {
     current: parseCurrentWeather(current),
     hourly: parseHourlyForecast(forecast),
     daily: parseDailyForecast(forecast),
+    airQuality,
     city: current.name,
     country: current.sys?.country ?? '',
   };
@@ -161,4 +178,64 @@ function getMostRelevantCondition(conditions: number[]): number {
     if (idx !== -1 && idx < bestIdx) { bestIdx = idx; bestCode = code; }
   }
   return bestCode;
+}
+
+// ── EPA AQI Calculation ──────────────────────────────────
+// Breakpoints: [Clow, Chigh, Ilow, Ihigh]
+type Breakpoint = [number, number, number, number];
+
+// EPA AQI breakpoints — all in the units EPA expects
+// PM2.5: µg/m³ (OWM gives µg/m³ ✓)
+// PM10: µg/m³ (OWM gives µg/m³ ✓)
+// O3: ppb (OWM gives µg/m³, convert: ppb = µg/m³ / 2.0)
+// NO2: ppb (OWM gives µg/m³, convert: ppb = µg/m³ / 1.88)
+// SO2: ppb (OWM gives µg/m³, convert: ppb = µg/m³ / 2.62)
+// CO: ppm (OWM gives µg/m³, convert: ppm = µg/m³ / 1145)
+
+const PM25_BP: Breakpoint[] = [
+  [0, 12, 0, 50], [12.1, 35.4, 51, 100], [35.5, 55.4, 101, 150],
+  [55.5, 150.4, 151, 200], [150.5, 250.4, 201, 300], [250.5, 500.4, 301, 500],
+];
+const PM10_BP: Breakpoint[] = [
+  [0, 54, 0, 50], [55, 154, 51, 100], [155, 254, 101, 150],
+  [255, 354, 151, 200], [355, 424, 201, 300], [425, 604, 301, 500],
+];
+// O3 8-hour in ppb
+const O3_BP: Breakpoint[] = [
+  [0, 54, 0, 50], [55, 70, 51, 100], [71, 85, 101, 150],
+  [86, 105, 151, 200], [106, 200, 201, 300],
+];
+// NO2 1-hour in ppb
+const NO2_BP: Breakpoint[] = [
+  [0, 53, 0, 50], [54, 100, 51, 100], [101, 360, 101, 150],
+  [361, 649, 151, 200], [650, 1249, 201, 300], [1250, 2049, 301, 500],
+];
+// SO2 1-hour in ppb
+const SO2_BP: Breakpoint[] = [
+  [0, 35, 0, 50], [36, 75, 51, 100], [76, 185, 101, 150],
+  [186, 304, 151, 200], [305, 604, 201, 300], [605, 1004, 301, 500],
+];
+// CO 8-hour in ppm
+const CO_BP: Breakpoint[] = [
+  [0, 4.4, 0, 50], [4.5, 9.4, 51, 100], [9.5, 12.4, 101, 150],
+  [12.5, 15.4, 151, 200], [15.5, 30.4, 201, 300], [30.5, 50.4, 301, 500],
+];
+
+function calcEpaAqi(concentration: number, breakpoints: Breakpoint[]): number {
+  if (concentration < 0) return 0;
+  for (const [cLow, cHigh, iLow, iHigh] of breakpoints) {
+    if (concentration >= cLow && concentration <= cHigh) {
+      return ((iHigh - iLow) / (cHigh - cLow)) * (concentration - cLow) + iLow;
+    }
+  }
+  return 500; // Beyond scale
+}
+
+function getEpaLabel(aqi: number): string {
+  if (aqi <= 50) return 'Good';
+  if (aqi <= 100) return 'Moderate';
+  if (aqi <= 150) return 'Unhealthy for Sensitive';
+  if (aqi <= 200) return 'Unhealthy';
+  if (aqi <= 300) return 'Very Unhealthy';
+  return 'Hazardous';
 }

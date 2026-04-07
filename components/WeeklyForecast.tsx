@@ -1,6 +1,6 @@
 import React from 'react';
 import { View, Text, StyleSheet } from 'react-native';
-import { SPACING, RADIUS, FONTS, FONT_SIZES } from '../constants/theme';
+import { SPACING, FONTS, FONT_SIZES } from '../constants/theme';
 import WeatherFace from './WeatherFace';
 import type { DailyItem } from '../utils/weatherApi';
 
@@ -16,7 +16,7 @@ export default function WeeklyForecast({ daily }: { daily: DailyItem[] }) {
 
   return (
     <View style={s.container}>
-      <Text style={s.title}>This Week</Text>
+      <Text style={s.title}>This week</Text>
       <View style={s.card}>
         {daily.map((day, i) => {
           const leftPct = ((day.tempMin - gMin) / range) * 100;
@@ -24,16 +24,13 @@ export default function WeeklyForecast({ daily }: { daily: DailyItem[] }) {
           const avg = (day.tempMin + day.tempMax) / 2;
           return (
             <View key={`d-${day.date}-${i}`} style={[s.row, i < daily.length - 1 && s.rowBorder]}>
-              <Text style={s.dayName}>{getDayName(day.date, i)}</Text>
-              <View style={s.faceWrap}><WeatherFace temp={avg} conditionCode={day.conditionCode} size={24} /></View>
-              <Text style={s.pop}>{day.pop > 0 ? `${day.pop}%` : ''}</Text>
-              <View style={s.barWrap}>
-                <Text style={s.tempMin}>{day.tempMin}°</Text>
-                <View style={s.barTrack}>
-                  <View style={[s.barFill, { left: `${leftPct}%`, width: `${widthPct}%` }]} />
-                </View>
-                <Text style={s.tempMax}>{day.tempMax}°</Text>
+              <Text style={[s.dayName, i === 0 && s.dayToday]}>{getDayName(day.date, i)}</Text>
+              <View style={s.faceWrap}><WeatherFace temp={avg} conditionCode={day.conditionCode} size={22} /></View>
+              <Text style={s.tempMin}>{day.tempMin}°</Text>
+              <View style={s.barTrack}>
+                <View style={[s.barFill, { left: `${leftPct}%`, width: `${widthPct}%` }]} />
               </View>
+              <Text style={s.tempMax}>{day.tempMax}°</Text>
             </View>
           );
         })}
@@ -43,17 +40,16 @@ export default function WeeklyForecast({ daily }: { daily: DailyItem[] }) {
 }
 
 const s = StyleSheet.create({
-  container: { marginTop: SPACING.lg, marginHorizontal: SPACING.lg, marginBottom: SPACING.xxl },
-  title: { fontSize: FONT_SIZES.subtitle, fontFamily: FONTS.bold, color: '#fff', marginBottom: SPACING.sm },
-  card: { backgroundColor: 'rgba(255,255,255,0.15)', borderRadius: RADIUS.lg, padding: SPACING.md, borderWidth: 1, borderColor: 'rgba(255,255,255,0.1)' },
-  row: { flexDirection: 'row', alignItems: 'center', paddingVertical: SPACING.sm + 2 },
-  rowBorder: { borderBottomWidth: 1, borderBottomColor: 'rgba(255,255,255,0.1)' },
-  dayName: { width: 50, fontSize: FONT_SIZES.body, fontFamily: FONTS.semibold, color: '#fff' },
-  faceWrap: { width: 36, alignItems: 'center' },
-  pop: { width: 50, fontSize: FONT_SIZES.micro, fontFamily: FONTS.medium, color: 'rgba(255,255,255,0.7)', textAlign: 'center' },
-  barWrap: { flex: 1, flexDirection: 'row', alignItems: 'center', marginLeft: SPACING.sm, gap: SPACING.xs },
-  tempMin: { fontSize: FONT_SIZES.caption, fontFamily: FONTS.medium, color: 'rgba(255,255,255,0.6)', width: 28, textAlign: 'right' },
-  barTrack: { flex: 1, height: 6, backgroundColor: 'rgba(255,255,255,0.15)', borderRadius: 3, overflow: 'hidden', position: 'relative' },
-  barFill: { position: 'absolute', top: 0, height: 6, borderRadius: 3, backgroundColor: 'rgba(255,255,255,0.6)' },
-  tempMax: { fontSize: FONT_SIZES.caption, fontFamily: FONTS.bold, color: '#fff', width: 28 },
+  container: { marginTop: SPACING.md, marginHorizontal: SPACING.lg, marginBottom: SPACING.xxl },
+  title: { fontSize: 16, fontFamily: FONTS.semibold, color: 'rgba(255,255,255,0.5)', marginBottom: SPACING.sm, textTransform: 'uppercase', letterSpacing: 1 },
+  card: { backgroundColor: 'rgba(255,255,255,0.08)', borderRadius: 20, paddingHorizontal: SPACING.md, paddingVertical: SPACING.xs },
+  row: { flexDirection: 'row', alignItems: 'center', paddingVertical: 12 },
+  rowBorder: { borderBottomWidth: 0.5, borderBottomColor: 'rgba(255,255,255,0.08)' },
+  dayName: { width: 46, fontSize: 15, fontFamily: FONTS.medium, color: 'rgba(255,255,255,0.6)' },
+  dayToday: { color: '#fff', fontFamily: FONTS.bold },
+  faceWrap: { width: 30, alignItems: 'center', marginRight: 8 },
+  tempMin: { fontSize: 15, fontFamily: FONTS.medium, color: 'rgba(255,255,255,0.4)', width: 32, textAlign: 'right', marginRight: 8 },
+  barTrack: { flex: 1, height: 4, backgroundColor: 'rgba(255,255,255,0.1)', borderRadius: 2, overflow: 'hidden', position: 'relative' },
+  barFill: { position: 'absolute', top: 0, height: 4, borderRadius: 2, backgroundColor: 'rgba(255,255,255,0.5)' },
+  tempMax: { fontSize: 15, fontFamily: FONTS.bold, color: '#fff', width: 32, marginLeft: 8 },
 });

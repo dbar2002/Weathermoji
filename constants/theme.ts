@@ -20,9 +20,14 @@ export const COLORS = {
   gradientSnow: ['#E8F0FE', '#B8C9E8'] as const,
   gradientStormy: ['#3D4E5C', '#1C2B36'] as const,
   gradientMist: ['#D5DBEA', '#AEB6C5'] as const,
+  // Night variants
+  gradientCloudyNight: ['#2C3E50', '#1A2530'] as const,
+  gradientRainyNight: ['#1E3A5F', '#0F2137'] as const,
+  gradientSnowNight: ['#2D3A4A', '#1A2535'] as const,
+  gradientMistNight: ['#2A3545', '#1C2835'] as const,
 } as const;
 
-export type GradientKey = 'gradientSunny' | 'gradientRainy' | 'gradientCloudy' | 'gradientNight' | 'gradientSnow' | 'gradientStormy' | 'gradientMist';
+export type GradientKey = 'gradientSunny' | 'gradientRainy' | 'gradientCloudy' | 'gradientNight' | 'gradientSnow' | 'gradientStormy' | 'gradientMist' | 'gradientCloudyNight' | 'gradientRainyNight' | 'gradientSnowNight' | 'gradientMistNight';
 
 export const SPACING = { xs: 4, sm: 8, md: 16, lg: 24, xl: 32, xxl: 48 } as const;
 export const RADIUS = { sm: 12, md: 20, lg: 28, xl: 36, pill: 999 } as const;
