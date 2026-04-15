@@ -13,18 +13,20 @@ export const COLORS = {
   textLight: '#8B8BA3',
   accent: '#FF6B35',
   accentSecondary: '#6EC6FF',
-  gradientSunny: ['#FFB347', '#FFCC33'] as const,
-  gradientRainy: ['#6EC6FF', '#4A90D9'] as const,
-  gradientCloudy: ['#C8D6E5', '#8395A7'] as const,
-  gradientNight: ['#0F2027', '#203A43'] as const,
-  gradientSnow: ['#E8F0FE', '#B8C9E8'] as const,
-  gradientStormy: ['#3D4E5C', '#1C2B36'] as const,
-  gradientMist: ['#D5DBEA', '#AEB6C5'] as const,
-  // Night variants
-  gradientCloudyNight: ['#2C3E50', '#1A2530'] as const,
-  gradientRainyNight: ['#1E3A5F', '#0F2137'] as const,
-  gradientSnowNight: ['#2D3A4A', '#1A2535'] as const,
-  gradientMistNight: ['#2A3545', '#1C2835'] as const,
+
+  // 3-stop cinematic gradients for richer depth
+  gradientSunny: ['#FFC84B', '#FF9A3C', '#FF7B47'] as const,
+  gradientRainy: ['#5BA3D9', '#3D7CC9', '#2D5FA0'] as const,
+  gradientCloudy: ['#B8C8DA', '#8A9DB5', '#6E849C'] as const,
+  gradientNight: ['#0A1628', '#142440', '#1A3050'] as const,
+  gradientSnow: ['#DCE8F8', '#B8CEE8', '#9AB8D8'] as const,
+  gradientStormy: ['#2D3A48', '#1E2830', '#141C24'] as const,
+  gradientMist: ['#C5CED8', '#A0ACB8', '#8090A0'] as const,
+  // Night variants — deeper, more cinematic
+  gradientCloudyNight: ['#1E2D3D', '#152030', '#0E1620'] as const,
+  gradientRainyNight: ['#122848', '#0E1E38', '#081428'] as const,
+  gradientSnowNight: ['#1E2838', '#162030', '#101828'] as const,
+  gradientMistNight: ['#1E2530', '#161C25', '#10151C'] as const,
 } as const;
 
 export type GradientKey = 'gradientSunny' | 'gradientRainy' | 'gradientCloudy' | 'gradientNight' | 'gradientSnow' | 'gradientStormy' | 'gradientMist' | 'gradientCloudyNight' | 'gradientRainyNight' | 'gradientSnowNight' | 'gradientMistNight';
@@ -32,12 +34,34 @@ export type GradientKey = 'gradientSunny' | 'gradientRainy' | 'gradientCloudy' |
 export const SPACING = { xs: 4, sm: 8, md: 16, lg: 24, xl: 32, xxl: 48 } as const;
 export const RADIUS = { sm: 12, md: 20, lg: 28, xl: 36, pill: 999 } as const;
 
+// 3D-enhanced shadows with embossed card feel
 export const SHADOWS = {
-  card: { shadowColor: '#2D2250', shadowOffset: { width: 0, height: 8 }, shadowOpacity: 0.08, shadowRadius: 24, elevation: 6 },
-  cardHover: { shadowColor: '#FF6B35', shadowOffset: { width: 0, height: 12 }, shadowOpacity: 0.15, shadowRadius: 32, elevation: 10 },
+  card: {
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 8 },
+    shadowOpacity: 0.1,
+    shadowRadius: 24,
+    elevation: 8,
+  },
+  cardHover: {
+    shadowColor: '#FF6B35',
+    shadowOffset: { width: 0, height: 12 },
+    shadowOpacity: 0.15,
+    shadowRadius: 32,
+    elevation: 12,
+  },
+  // Inner glow for 3D glass effect
+  cardGlass: {
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 6 },
+    shadowOpacity: 0.12,
+    shadowRadius: 20,
+    elevation: 6,
+  },
 } as const;
 
 export const FONTS = {
+  black: 'Nunito_800ExtraBold',
   bold: 'Nunito_800ExtraBold',
   semibold: 'Nunito_700Bold',
   medium: 'Nunito_600SemiBold',
