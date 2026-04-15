@@ -1,4 +1,4 @@
-import React, { useEffect, useRef } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import {
   View, Text, Animated, ScrollView, RefreshControl, StyleSheet,
   ActivityIndicator, StatusBar, Dimensions, TouchableOpacity,
@@ -25,6 +25,13 @@ export default function HomeScreen() {
   // Fade-ins
   const fadeIn = useRef(new Animated.Value(0)).current;
   const slideUp = useRef(new Animated.Value(40)).current;
+
+  // Live clock tick
+  const [tick, setTick] = useState(0);
+  useEffect(() => {
+    const interval = setInterval(() => setTick((t) => t + 1), 30000);
+    return () => clearInterval(interval);
+  }, []);
 
   useEffect(() => {
     Animated.loop(
@@ -96,8 +103,14 @@ export default function HomeScreen() {
   }
 
   const tempC = unit === 'imperial' ? ((weather!.current.temp - 32) * 5) / 9 : weather!.current.temp;
-  const now = new Date();
-  const timeStr = now.toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit', hour12: true });
+
+  const localTime = (() => {
+    const now = new Date();
+    const utcMs = now.getTime() + now.getTimezoneOffset() * 60000;
+    const cityMs = utcMs + weather!.timezoneOffset * 1000;
+    const cityDate = new Date(cityMs);
+    return cityDate.toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit', hour12: true });
+  })();
 
   return (
     <LinearGradient colors={[...gradient]} start={{ x: 0, y: 0 }} end={{ x: 0.2, y: 1 }} style={s.full}>
@@ -119,7 +132,7 @@ export default function HomeScreen() {
             <View style={s.topBar}>
               <View style={s.topCenter}>
                 <Text style={s.cityName}>{weather.city}, {weather.country}</Text>
-                <Text style={s.timeText}>{timeStr}</Text>
+                <Text style={s.timeText}>{localTime}</Text>
               </View>
               <TouchableOpacity onPress={toggleUnit} style={s.unitBtn}>
                 <Text style={s.unitBtnText}>°{unit === 'imperial' ? 'F' : 'C'}</Text>
@@ -141,14 +154,14 @@ export default function HomeScreen() {
               </Animated.View>
             </Animated.View>
 
-            {/* ── Bottom info: condition + temp ── */}
+            {/* ── Bottom info: temp + condition + hi/lo ── */}
             <Animated.View style={[s.bottomInfo, { opacity: heroOpacity }]}>
+              <Text style={s.heroTemp}>{weather.current.temp}°</Text>
               <Text style={s.conditionText}>{meta!.label}</Text>
               <View style={s.hiLoRow}>
-                <Text style={s.hiLo}>↑ {weather.current.tempMax}°</Text>
-                <Text style={s.hiLo}>↓ {weather.current.tempMin}°</Text>
+                <Text style={s.hiLo}>H: {weather.current.tempMax}°</Text>
+                <Text style={s.hiLo}>L: {weather.current.tempMin}°</Text>
               </View>
-              <Text style={s.heroTemp}>{weather.current.temp}°</Text>
               <Text style={s.funMessage}>{getTempMessage(tempC)}</Text>
             </Animated.View>
 
@@ -169,7 +182,7 @@ export default function HomeScreen() {
               </View>
 
               {/* Hourly */}
-              <HourlyForecast hourly={weather.hourly} />
+              <HourlyForecast hourly={weather.hourly} timezoneOffset={weather.timezoneOffset} />
 
               {/* Weekly */}
               <WeeklyForecast daily={weather.daily} />
@@ -223,34 +236,35 @@ const s = StyleSheet.create({
   bottomInfo: {
     paddingHorizontal: SPACING.lg,
     paddingBottom: SPACING.lg,
-  },
-  conditionText: {
-    fontSize: 18,
-    fontFamily: FONTS.semibold,
-    color: 'rgba(255,255,255,0.85)',
-  },
-  hiLoRow: {
-    flexDirection: 'row',
-    gap: SPACING.md,
-    marginTop: 4,
-  },
-  hiLo: {
-    fontSize: FONT_SIZES.body,
-    fontFamily: FONTS.medium,
-    color: 'rgba(255,255,255,0.6)',
+    alignItems: 'center',
   },
   heroTemp: {
     fontSize: 96,
     fontFamily: FONTS.bold,
     color: '#fff',
     lineHeight: 104,
-    marginTop: -4,
+  },
+  conditionText: {
+    fontSize: 18,
+    fontFamily: FONTS.semibold,
+    color: 'rgba(255,255,255,0.85)',
+    marginTop: SPACING.xs,
+  },
+  hiLoRow: {
+    flexDirection: 'row',
+    gap: SPACING.lg,
+    marginTop: SPACING.xs,
+  },
+  hiLo: {
+    fontSize: FONT_SIZES.body,
+    fontFamily: FONTS.semibold,
+    color: 'rgba(255,255,255,0.6)',
   },
   funMessage: {
     fontSize: FONT_SIZES.body,
     fontFamily: FONTS.regular,
     color: 'rgba(255,255,255,0.5)',
-    marginTop: -4,
+    marginTop: SPACING.sm,
   },
 
   // Details below fold

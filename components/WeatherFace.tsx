@@ -27,15 +27,16 @@ export default function WeatherFace({ temp, conditionCode, isNight = false, size
 function SunFace({ temp, size }: { temp: number; size: number }) {
   let eyes: string, mouth: string, cheeks = false, sweat = false;
 
-  if (temp >= 40)      { eyes = 'x';       mouth = 'wavy';       cheeks = true; sweat = true; }
-  else if (temp >= 35) { eyes = 'squint';  mouth = 'open-frown'; cheeks = true; sweat = true; }
-  else if (temp >= 30) { eyes = 'shades';  mouth = 'smirk'; }
-  else if (temp >= 25) { eyes = 'happy';   mouth = 'big-smile';  cheeks = true; }
-  else if (temp >= 20) { eyes = 'normal';  mouth = 'smile'; }
-  else if (temp >= 15) { eyes = 'normal';  mouth = 'small-smile'; }
-  else if (temp >= 10) { eyes = 'wide';    mouth = 'wavy'; }
-  else if (temp >= 5)  { eyes = 'wide';    mouth = 'chatter';    cheeks = true; }
-  else                 { eyes = 'x';       mouth = 'open-frown'; cheeks = true; }
+  // temp is in Celsius
+  if (temp >= 38)      { eyes = 'x';       mouth = 'wavy';       cheeks = true; sweat = true; }  // 100°F+
+  else if (temp >= 32) { eyes = 'squint';  mouth = 'open-frown'; cheeks = true; sweat = true; }  // 90°F+
+  else if (temp >= 26) { eyes = 'shades';  mouth = 'smirk'; }                                    // 79°F+ sunglasses!
+  else if (temp >= 21) { eyes = 'happy';   mouth = 'big-smile';  cheeks = true; }                 // 70°F+
+  else if (temp >= 16) { eyes = 'normal';  mouth = 'smile'; }                                     // 61°F+
+  else if (temp >= 10) { eyes = 'normal';  mouth = 'small-smile'; }                               // 50°F+
+  else if (temp >= 4)  { eyes = 'wide';    mouth = 'wavy'; }                                      // 39°F+
+  else if (temp >= -1) { eyes = 'wide';    mouth = 'chatter';    cheeks = true; }                  // 30°F+
+  else                 { eyes = 'x';       mouth = 'open-frown'; cheeks = true; }                  // below 30°F
 
   const r = size / 2, cx = r, cy = r;
   const dk = '#5C3D1A';
@@ -78,11 +79,12 @@ function SunFace({ temp, size }: { temp: number; size: number }) {
 function MoonFace({ temp, size }: { temp: number; size: number }) {
   let eyes: string, mouth: string, cheeks = false;
 
-  if (temp >= 25)      { eyes = 'happy';  mouth = 'smile';       cheeks = true; }
-  else if (temp >= 18) { eyes = 'sleepy'; mouth = 'small-smile'; }
-  else if (temp >= 10) { eyes = 'sleepy'; mouth = 'neutral'; }
-  else if (temp >= 3)  { eyes = 'wide';   mouth = 'wavy';        cheeks = true; }
-  else                 { eyes = 'x';      mouth = 'open-frown';  cheeks = true; }
+  // temp is in Celsius
+  if (temp >= 21)      { eyes = 'happy';  mouth = 'smile';       cheeks = true; }  // 70°F+ warm night
+  else if (temp >= 14) { eyes = 'sleepy'; mouth = 'small-smile'; }                 // 57°F+ mild
+  else if (temp >= 7)  { eyes = 'sleepy'; mouth = 'neutral'; }                     // 45°F+ cool
+  else if (temp >= 0)  { eyes = 'wide';   mouth = 'wavy';        cheeks = true; }  // 32°F+ cold
+  else                 { eyes = 'x';      mouth = 'open-frown';  cheeks = true; }  // below 32°F
 
   const r = size / 2, cx = r, cy = r;
   const dk = '#4A4070';

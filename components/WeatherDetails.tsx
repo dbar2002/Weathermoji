@@ -31,10 +31,9 @@ export default function WeatherDetails({ current, airQuality, unit }: Props) {
         <UVIndexCard conditionCode={current.conditionCode} isNight={current.isNight} clouds={current.clouds} />
       </View>
 
-      {/* Row 3: Visibility + Pressure */}
+      {/* Row 3: Visibility */}
       <View style={s.row}>
         <DetailCard title="VISIBILITY" value={visibilityVal} subtitle={getVisibilityLabel(current.visibility)} />
-        <DetailCard title="PRESSURE" value={`${current.pressure}`} subtitle="hPa" />
       </View>
     </View>
   );

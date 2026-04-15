@@ -91,13 +91,14 @@ export function getCloudMood(code: number): CloudMood {
 }
 
 export function getTempMessage(tempC: number): string {
-  if (tempC >= 35) return 'Scorching hot!';
-  if (tempC >= 30) return 'Hot stuff!';
-  if (tempC >= 25) return 'Warm & lovely';
-  if (tempC >= 20) return 'Perfect weather!';
-  if (tempC >= 15) return 'Nice & mild';
-  if (tempC >= 10) return 'Grab a jacket!';
-  if (tempC >= 5) return 'Chilly out there!';
-  if (tempC >= 0) return 'Freezing cold!';
+  if (tempC >= 38) return 'Scorching hot!';      // 100°F+
+  if (tempC >= 32) return 'Hot stuff!';           // 90°F+
+  if (tempC >= 26) return 'Sunglass weather!';    // 79°F+
+  if (tempC >= 21) return 'Warm & lovely';        // 70°F+
+  if (tempC >= 16) return 'Perfect weather!';     // 61°F+
+  if (tempC >= 10) return 'Nice & mild';          // 50°F+
+  if (tempC >= 4) return 'Grab a jacket!';        // 39°F+
+  if (tempC >= -1) return 'Chilly out there!';    // 30°F+
+  if (tempC >= -7) return 'Freezing cold!';       // 19°F+
   return 'Brrr! Sub-zero!';
 }

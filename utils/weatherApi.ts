@@ -56,6 +56,7 @@ export interface WeatherData {
   airQuality: AirQuality | null;
   city: string;
   country: string;
+  timezoneOffset: number; // seconds from UTC
 }
 
 export interface CityResult {
@@ -99,6 +100,7 @@ export async function fetchWeather(lat: number, lon: number, units: UnitSystem =
     airQuality,
     city: current.name,
     country: current.sys?.country ?? '',
+    timezoneOffset: current.timezone ?? 0, // seconds from UTC
   };
 }
 

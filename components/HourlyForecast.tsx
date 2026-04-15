@@ -4,16 +4,34 @@ import { SPACING, RADIUS, FONTS, FONT_SIZES } from '../constants/theme';
 import WeatherFace from './WeatherFace';
 import type { HourlyItem } from '../utils/weatherApi';
 
-export default function HourlyForecast({ hourly }: { hourly: HourlyItem[] }) {
+interface Props {
+  hourly: HourlyItem[];
+  timezoneOffset?: number; // seconds from UTC
+}
+
+export default function HourlyForecast({ hourly, timezoneOffset = 0 }: Props) {
   if (!hourly?.length) return null;
 
+  // Convert UTC timestamp to the city's local hour
+  const getCityHour = (ts: number): number => {
+    const utcMs = ts * 1000;
+    const cityMs = utcMs + timezoneOffset * 1000;
+    const cityDate = new Date(cityMs);
+    // Use UTC methods since we already shifted the time
+    return cityDate.getUTCHours();
+  };
+
   const formatTime = (ts: number): string => {
-    const h = new Date(ts * 1000).getHours();
+    const h = getCityHour(ts);
     if (h === 0) return '12a';
     if (h === 12) return '12p';
     return h > 12 ? `${h - 12}p` : `${h}a`;
   };
-  const isNightHour = (ts: number) => { const h = new Date(ts * 1000).getHours(); return h < 6 || h >= 20; };
+
+  const isNightHour = (ts: number) => {
+    const h = getCityHour(ts);
+    return h < 6 || h >= 20;
+  };
 
   return (
     <View style={s.container}>
